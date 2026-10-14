@@ -1,18 +1,22 @@
 # lab-2-flask
-лабораторная работа 2 по работе с app.py
 
-Вся суть заключалась в том, что было необходимо собрать безопасный образ Flask
+лабораторная работа 2 по работе с `app.py`
 
-# Для этого были проделаны следующие шаги
+Вся суть заключалась в том, что было необходимо собрать безопасный образ Flask.
+
+## Для этого были проделаны следующие шаги
 
 1. Получен файл **seed.json**
 2. Создан Dockerfile
 3. На основе этого файла (**п.2**) собран образ
 
-## Вывод из консоли **(Git Bash + Windows Powershell)**
+## Вывод из консоли (Git Bash + Windows PowerShell)
 
-**Windows Powershell** (проверка на версии нужного ПО)
+### Windows PowerShell
 
+проверка на версии нужного ПО
+
+```powershell
 PS C:\Users\User> jq --version
 
 jq-1.8.2
@@ -22,13 +26,9 @@ PS C:\Users\User> cd .\Desktop\
 PS C:\Users\User\Desktop> cat .\seed-mvladik.json
 
 {
-
   "login": "mvladik",
-  
   "token": "54be87d8f83d27efb6c5e7cb3eba8cc1",
-  
   "prefix": "54be87d8"
-  
 }
 
 PS C:\Users\User\Desktop> docker -v
@@ -48,10 +48,13 @@ PS C:\Users\User\Desktop> jq --version
 jq-1.8.2
 
 PS C:\Users\User\Desktop>
+```
 
+### Git Bash
 
-**Git Bash** (то, что выполнялось по самому Docker-образу)
+то, что выполнялось по самому Docker-образу
 
+```bash
 User@Home-PC MINGW64 /c/lab2
 $ SEED_JSON=seed-mvladik.json
 
@@ -73,7 +76,7 @@ $ docker build \
  => [internal] load build definition from Dockerfile                                                                                                                                            0.0s
  => => transferring dockerfile: 916B                                                                                                                                                            0.0s
  => [internal] load .dockerignore                                                                                                                                                               0.1s
- => => transferring context: 34B                                                                                                                                                                0.0s
+ => => transferring context: 34B                                                                                                                                                                0.1s
  => [internal] load metadata for docker.io/library/python:3.12-slim                                                                                                                             2.3s
  => [auth] library/python:pull token for registry-1.docker.io                                                                                                                                   0.0s
  => [internal] load build context                                                                                                                                                               0.0s
@@ -152,7 +155,6 @@ $ docker build --build-arg LAB_LOGIN="$LOGIN" --build-arg LAB_TOKEN="$TOKEN" -t 
  => [runtime 3/5] WORKDIR /app                                                                                      0.1s
  => [runtime 4/5] COPY --from=builder /install /usr/local                                                           0.2s
  => [runtime 5/5] COPY app/app.py /app/app.py                                                                       0.0s
- => exporting to image                                                                                              0.2s
  => => exporting layers                                                                                             0.2s
  => => writing image sha256:13729f684e7ea58810952fcfbedc08dbdb00c67b40db01057742ec559118ba12                        0.0s
  => => naming to docker.io/mvladik/image-lab:54be87d8                                                               0.0s
@@ -254,3 +256,4 @@ $ docker inspect "$LOGIN/image-lab:$PREFIX" | grep -A2 Labels
             "Labels": {
                 "org.lab.login": "mvladik",
                 "org.lab.token": "54be87d8f83d27efb6c5e7cb3eba8cc1"
+```
