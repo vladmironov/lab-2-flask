@@ -24,13 +24,6 @@ jq-1.8.2
 PS C:\Users\User> cd .\Desktop\
 
 PS C:\Users\User\Desktop> cat .\seed-mvladik.json
-
-{
-  "login": "mvladik",
-  "token": "54be87d8f83d27efb6c5e7cb3eba8cc1",
-  "prefix": "54be87d8"
-}
-
 PS C:\Users\User\Desktop> docker -v
 
 Docker version 24.0.5, build ced0996
