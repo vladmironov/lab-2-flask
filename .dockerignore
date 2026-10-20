@@ -1,0 +1,8 @@
+.git
+.gitignore
+seed-*.json
+__pycache__
+*.pyc
+.venv
+Dockerfile
+README.md
