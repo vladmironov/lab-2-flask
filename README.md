@@ -257,3 +257,83 @@ $ docker inspect "$LOGIN/image-lab:$PREFIX" | grep -A2 Labels
                 "org.lab.login": "mvladik",
                 "org.lab.token": "54be87d8f83d27efb6c5e7cb3eba8cc1"
 ```
+
+## Во время выполнения работы (изменения от 20.10.2026) были проделаны следующие изменения 
+
+1. Был удален файл seed-*.json
+**О том, почему в Git не пропадают изменения после удаления файла**
+Git сам по себе - система контроля версий, и после каждого коммита история изменений сохраняется, то есть если изначально мы внесли информацию в репозиторий одним коммитом, а следующим удалим файл, то инфа о предыдущем коммите сохранится (только если не прописать --rm)
+
+2. Были добавлены файлы **.dockerignore** и **.gitignore**
+3. **Gunicorn** был добавлен в requirements.txt, поскольку без него был следующий вывод от Docker
+
+```
+C:\lab2> docker logs lab_logs
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+Press CTRL+C to quit
+Shutting down...
+```
+
+что означает, что без библиотеки Gunicorn образ для продакшена не соберется и не запустится.
+
+4. Logs
+
+```
+C:\lab2> docker logs lab_logs
+[2026-10-20 11:56:41 +0000] [1] [INFO] Starting gunicorn 22.0.0
+[2026-10-20 11:56:41 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)
+[2026-10-20 11:56:41 +0000] [1] [INFO] Using worker: sync
+[2026-10-20 11:56:41 +0000] [7] [INFO] Booting worker with pid: 7
+[2026-10-20 11:56:41 +0000] [8] [INFO] Booting worker with pid: 8
+[2026-10-20 11:56:45 +0000] [1] [INFO] Handling signal: term
+[2026-10-20 11:56:45 +0000] [8] [INFO] Worker exiting (pid: 8)
+[2026-10-20 11:56:45 +0000] [7] [INFO] Worker exiting (pid: 7)
+Shutting down...
+Shutting down...
+[2026-10-20 11:56:45 +0000] [1] [INFO] Shutting down: Master
+```
+
+5. Docker history
+
+```
+C:\lab2> docker history
+"docker history" requires exactly 1 argument.
+See 'docker history --help'.
+
+Usage:  docker history [OPTIONS] IMAGE
+
+Show the history of an image
+
+C:\lab2> docker history mvladik/image-lab:54be87d8
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+1b23eb3fa2bb   14 minutes ago   CMD ["gunicorn" "--bind" "0.0.0.0:8000" "--w…   0B        buildkit.dockerfile.v0
+<missing>      14 minutes ago   HEALTHCHECK &{["CMD-SHELL" "python -c \"impo…   0B        buildkit.dockerfile.v0
+<missing>      14 minutes ago   EXPOSE map[8000/tcp:{}]                         0B        buildkit.dockerfile.v0
+<missing>      14 minutes ago   USER appuser                                    0B        buildkit.dockerfile.v0
+<missing>      14 minutes ago   COPY app/app.py /app/app.py # buildkit          1.03kB    buildkit.dockerfile.v0
+<missing>      14 minutes ago   COPY /install /usr/local # buildkit             6.37MB    buildkit.dockerfile.v0
+<missing>      5 days ago       WORKDIR /app                                    0B        buildkit.dockerfile.v0
+<missing>      5 days ago       RUN |2 LAB_LOGIN=mvladik LAB_TOKEN=54be87d8f…   8.93kB    buildkit.dockerfile.v0
+<missing>      5 days ago       ENV LAB_LOGIN=mvladik LAB_TOKEN=54be87d8f83d…   0B        buildkit.dockerfile.v0
+<missing>      5 days ago       LABEL org.lab.login=mvladik org.lab.token=54…   0B        buildkit.dockerfile.v0
+<missing>      5 days ago       ARG LAB_TOKEN=unknown                           0B        buildkit.dockerfile.v0
+<missing>      5 days ago       ARG LAB_LOGIN=unknown                           0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      CMD ["python3"]                                 0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      RUN /bin/sh -c set -eux;  for src in idle3 p…   36B       buildkit.dockerfile.v0
+<missing>      2 weeks ago      RUN /bin/sh -c set -eux;   savedAptMark="$(a…   36.8MB    buildkit.dockerfile.v0
+<missing>      2 weeks ago      ENV PYTHON_SHA256=c2c4321961fab0fb999d66e0ce…   0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      ENV PYTHON_VERSION=3.12.15                      0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      ENV GPG_KEY=7169605F62C751356D054A26A821E680…   0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      RUN /bin/sh -c set -eux;  apt-get update;  a…   3.81MB    buildkit.dockerfile.v0
+<missing>      2 weeks ago      ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      # debian.sh --arch 'amd64' out/ 'trixie' '@1…   78.8MB    debuerreotype 0.17
+
+C:\lab2>
+```
+
